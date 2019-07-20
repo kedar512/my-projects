@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+						 xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1"
+						 elementFormDefault="qualified" 
+           				 targetNamespace="http://example.com/demo/dto"
+           				 xmlns="http://example.com/demo/dto"
+           				 xmlns:jackson="http://annox.dev.java.net/com.fasterxml.jackson.annotation"
+           				 xmlns:annox="http://annox.dev.java.net"
+           				 jaxb:extensionBindingPrefixes="annox">
+           				 
+  
+  <xs:element name="author" type="author"/>
+
+  <xs:element name="book" type="book"/>
+
+  <xs:complexType name="author">
+    <xs:sequence>
+      <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+      <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="test">
+    <xs:sequence>
+      <xs:element name="testDate" type="xs:date" minOccurs="0" maxOccurs="1">
+      	<xs:annotation>
+                <xs:appinfo>
+                    <annox:annotate target="field">
+			          <jackson:JsonFormat shape="STRING" pattern="MM/dd/yyyy"/>
+			        </annox:annotate>
+                </xs:appinfo>
+            </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="book">
+    <xs:sequence>
+      <xs:element ref="author" minOccurs="0"/>
+      <xs:element name="pages" type="xs:int"/>
+      <xs:element name="publicationDate" type="xs:date" minOccurs="0"/>
+      <xs:element name="title" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
