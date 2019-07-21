@@ -5,18 +5,76 @@
            				 targetNamespace="http://example.com/demo/dto"
            				 xmlns="http://example.com/demo/dto"
            				 xmlns:jackson="http://annox.dev.java.net/com.fasterxml.jackson.annotation"
+           				 xmlns:validation="http://annox.dev.java.net/javax.validation.constraints"
+           				 xmlns:tns="http://example.com/demo/dto"
            				 xmlns:annox="http://annox.dev.java.net"
            				 jaxb:extensionBindingPrefixes="annox">
            				 
   
   <xs:element name="author" type="author"/>
-
   <xs:element name="book" type="book"/>
+  <xs:element name="department" type="department"/>
+  <xs:element name="collegeStudent" type="collegeStudent"/>
+  <xs:element name="faculty" type="faculty"/>
+  <xs:element name="phoneNumber" type="phoneNumber"/>
+  <xs:element name="subject" type="subject"/>
+  
+	<xs:complexType name="department">
+		<xs:sequence>
+			<xs:element name="departmentName" type="xs:string"
+				minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="subject">
+		<xs:sequence>
+			<xs:element name="subjectName" type="xs:string"
+				minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+  
+	<xs:complexType name="phoneNumber">
+		<xs:sequence>
+			<xs:element name="phoneNumber" type="xs:long" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="collegeStudentId" type="xs:long" minOccurs="0"
+				maxOccurs="1" />	
+		</xs:sequence>
+	</xs:complexType>
+  
+	<xs:complexType name="collegeStudent">
+		<xs:sequence>
+			<xs:element name="id" type="xs:long" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="firstName" type="xs:string" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="lastName" type="xs:string" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="department" type="tns:department"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element name="subject" type="tns:subject"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="phoneNumbers" type="tns:phoneNumber"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+  
+	<xs:complexType name="faculty">
+		<xs:sequence>
+			<xs:element name="firstName" type="xs:string" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="lastName" type="xs:string" minOccurs="0"
+				maxOccurs="1" />
+			<xs:element name="department" type="tns:department"
+				minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
 
   <xs:complexType name="author">
     <xs:sequence>
-      <xs:element name="firstName" type="xs:string" minOccurs="0"/>
-      <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+      <xs:element name="firstName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="lastName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="books" type="tns:book" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
   
@@ -31,15 +89,58 @@
                 </xs:appinfo>
             </xs:annotation>
       </xs:element>
+      <xs:element name="longTest" type="xs:long" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="booleanTest" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="book">
     <xs:sequence>
-      <xs:element ref="author" minOccurs="0"/>
-      <xs:element name="pages" type="xs:int"/>
-      <xs:element name="publicationDate" type="xs:date" minOccurs="0"/>
       <xs:element name="title" type="xs:string" minOccurs="0"/>
+      <xs:element name="pages" type="xs:int"/>
+      <xs:element name="publicationDate" type="xs:date" minOccurs="0">
+      	<xs:annotation>
+        	<xs:appinfo>
+            	<annox:annotate target="field">
+			    	<jackson:JsonFormat shape="STRING" pattern="MM/dd/yyyy"/>
+			    </annox:annotate>
+            </xs:appinfo>
+      	</xs:annotation>
+      </xs:element>    
     </xs:sequence>
   </xs:complexType>
+  
+  <xs:complexType name="testUser">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1">
+      	<xs:annotation>
+					<xs:appinfo>
+						<annox:annotate target="field">
+							@org.hibernate.validator.constraints.NotBlank(message = "name cannot be null or empty")
+						</annox:annotate>
+						<annox:annotate target="field">
+							@javax.validation.constraints.Pattern(regexp = "[a-zA-Z]+\\.+?", message = "name should contain alphabets only")
+						</annox:annotate>
+					</xs:appinfo>
+		</xs:annotation>
+      </xs:element>
+      <xs:element name="id" type="xs:long" minOccurs="0" maxOccurs="1">
+      	<xs:annotation>
+					<xs:appinfo>
+						<annox:annotate target="field">
+							@javax.validation.constraints.Min(value = 1, message = "id should be greater than 0")
+						</annox:annotate>
+					</xs:appinfo>
+		</xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="DateAdapterTest">
+    <xs:sequence>
+      <xs:element name="dateTime" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
 </xs:schema>
